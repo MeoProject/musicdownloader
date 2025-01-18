@@ -1,0 +1,39 @@
+name: musicdownloader
+version: 1.0.1-beta.1
+description: "A new Flutter project."
+repository: "https://github.com/MeoProject/musicdownloader"
+issue_tracker: "https://github.com/MeoProject/musicdownloader/issues"
+environment:
+  sdk: ^3.6.0
+platforms:
+  android:
+
+dependencies:
+  flutter:
+    sdk: flutter
+  crypto: ^3.0.3
+  shared_preferences: ^2.2.2
+  file_picker: ^5.3.1
+  dio: ^5.7.0
+  flutter_downloader: ^1.7.4
+  flutter_launcher_icons: ^0.14.3
+  path_provider: ^2.1.5
+  permission_handler: ^11.3.1
+  http: ^0.13.5
+  mime: ^2.0.0
+  provider: ^6.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icon/app_icon.png
+    - assets/images/tx_icon.png
+    - assets/images/wy_icon.png
+    - assets/images/mg_icon.png
+    - assets/images/kg_icon.png
+    - assets/images/kw_icon.png
