@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -24,6 +25,7 @@ class DownloadService {
       final url = await _searchService.getDownloadUrl(source, songid, quality);
       if (url == null) {
         log.severe('获取下载 URL 失败');
+        Fluttertoast.showToast(msg: "获取下载 URL 失败");
         return null;
       }
 
@@ -52,6 +54,7 @@ class DownloadService {
             final coverPath = '${coverDir.path}/cover.jpg';
             await _dio.download(coverUrl, coverPath);
 
+            Fluttertoast.showToast(msg: "下载完成");
             log.info('下载完成');
           }
         });
@@ -60,6 +63,7 @@ class DownloadService {
       }
     } catch (e) {
       if (kDebugMode) {
+        Fluttertoast.showToast(msg: "下载出错：$e");
         log.severe('下载出错: $e');
       }
       return null;

@@ -205,7 +205,6 @@ class SearchPageState extends State<SearchPage> {
         (result['types'] as List).map((t) => t['type'] as String).toList();
     final sortedTypes = QualityTranslations.sortQualities(types);
 
-    // 只获取最高音质（排序后的最后一个）
     if (sortedTypes.isEmpty) return SizedBox.shrink();
 
     final highestQuality = sortedTypes.last;
@@ -286,7 +285,7 @@ class SearchPageState extends State<SearchPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(result['artist'] ?? ''),
-                          Text(result['album'] ?? ''), // 显示专辑名
+                          Text(result['album'] ?? ''),
                         ],
                       ),
                       trailing: IconButton(

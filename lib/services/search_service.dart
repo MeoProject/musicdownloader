@@ -34,12 +34,13 @@ class SearchService {
   Future<String?> getDownloadUrl(
       String source, String songid, String quality) async {
     try {
-      final response =
-          await http.get("https://lxmusic.ikunshare.com/url", queryParameters: {
-        "source": source,
-        "songId": songid,
-        "quality": quality,
-      });
+      final response = await http.get(
+        "https://lxmusic.ikunshare.com/url", 
+        queryParameters: {
+          "source": source,
+          "songId": songid,
+          "quality": quality,
+        });
       if (response.statusCode != 200 || response.data['code'] != 0) {
         final errormsg = response.data['msg'];
         throw Exception('链接获取失败：$errormsg');
@@ -257,7 +258,6 @@ class SearchService {
 
   Future<List<Map<String, dynamic>>> _handleWYResult(List songs) async {
     return await Future.wait(songs.map((song) async {
-      // 获取音质信息
       final qualityResponse = await http.get(
         'https://music.163.com/api/song/music/detail/get',
         queryParameters: {'songId': song['id']},
@@ -520,7 +520,6 @@ class SearchService {
         typesMap['flac24bit'] = {'size': size, 'hash': song['ResFileHash']};
       }
 
-      // 获取封面图片
       final img = await getKGImage({
         'songmid': song['Audioid'],
         'audioId': song['FileHash'],
@@ -546,14 +545,12 @@ class SearchService {
         'typeUrl': {},
       });
 
-      // 处理分组歌曲
       if (song['Grp'] != null) {
         for (var groupSong in song['Grp']) {
           final groupKey = '${groupSong['Audioid']}${groupSong['FileHash']}';
           if (ids.contains(groupKey)) continue;
           ids.add(groupKey);
 
-          // 递归处理分组歌曲
           list.add(_handleSingleKGSong(groupSong));
         }
       }

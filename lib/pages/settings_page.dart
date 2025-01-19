@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:musicdownloader/state/settings.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
@@ -133,6 +135,7 @@ By: MeoProject
   ikun@ikunshare.com
   naiy@zcmonety.xyz
         ''',
+        selectable: true,
       ),
     );
   }
@@ -153,12 +156,29 @@ class AboutUsPage extends StatelessWidget {
             title: Text('加入QQ群'),
             leading:
                 Image.asset('assets/icon/qq_icon.png', width: 24, height: 24),
-            onTap: () {},
+            onTap: () async {
+              final Uri url = Uri.parse(
+                  "mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3F_wv%3D1027%26k%3DYpNiyw1cm-agTdVEaDT2JZSqaNVtVvjw%26authKey%3DftdGNz3pmbrI4juc3eq62ta8bV%252BJSq%252FUhgXk%252BiOvIWnT0Tqkbmdg%252Buq17PTy7%252FnP%26noverify%3D0%26group_code%3D954976722");
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url);
+                Fluttertoast.showToast(msg: "已跳转");
+              } else {
+                Fluttertoast.showToast(msg: "跳转失败, 请检查是否安装QQ");
+              }
+            },
           ),
           ListTile(
             title: Text('加入Telegram群'),
             leading: Icon(Icons.telegram),
-            onTap: () {},
+            onTap: () async {
+              final Uri url = Uri.parse("https://t.me/MusicDownloaderCN");
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url);
+                Fluttertoast.showToast(msg: "已跳转");
+              } else {
+                Fluttertoast.showToast(msg: "跳转失败, 请检查是否安装任意浏览器");
+              }
+            },
           ),
         ],
       ),
