@@ -157,13 +157,12 @@ class AboutUsPage extends StatelessWidget {
             leading:
                 Image.asset('assets/icon/qq_icon.png', width: 24, height: 24),
             onTap: () async {
-              final Uri url = Uri.parse(
-                  "mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3F_wv%3D1027%26k%3DYpNiyw1cm-agTdVEaDT2JZSqaNVtVvjw%26authKey%3DftdGNz3pmbrI4juc3eq62ta8bV%252BJSq%252FUhgXk%252BiOvIWnT0Tqkbmdg%252Buq17PTy7%252FnP%26noverify%3D0%26group_code%3D954976722");
+              final Uri url = Uri.parse("https://qm.qq.com/q/7VaRB0zvFK");
               if (await canLaunchUrl(url)) {
                 await launchUrl(url);
                 Fluttertoast.showToast(msg: "已跳转");
               } else {
-                Fluttertoast.showToast(msg: "跳转失败, 请检查是否安装QQ");
+                Fluttertoast.showToast(msg: "跳转失败, 请检查是否任意浏览器");
               }
             },
           ),
