@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:dio/dio.dart';
@@ -8,22 +9,21 @@ import 'package:musicdownloader/state/settings.dart';
 import 'package:provider/provider.dart';
 import 'search_service.dart';
 
+final log = Logger("DownloadService");
+
 class DownloadService {
   final SearchService _searchService = SearchService();
   final Dio _dio = Dio();
 
-  Future<String?> downloadMusic(String source, String songmid, String quality,
+  Future<String?> downloadMusic(String source, String songid, String quality,
       Map<String, dynamic> song, BuildContext context) async {
-
     try {
       final settingsState = Provider.of<Settings>(context, listen: false);
       final downloadPath = settingsState.downloadPath;
 
-      final url = await _searchService.getDownloadUrl(source, songmid, quality);
+      final url = await _searchService.getDownloadUrl(source, songid, quality);
       if (url == null) {
-        if (kDebugMode) {
-          print('获取下载 URL 失败');
-        }
+        log.severe('获取下载 URL 失败');
         return null;
       }
 
@@ -43,19 +43,16 @@ class DownloadService {
 
         FlutterDownloader.registerCallback((id, status, progress) async {
           if (taskId == id) {
-            if (kDebugMode) {
-              print('下载进度: $progress%');
-              print('下载状态: $status');
-            }
+            log.info('下载进度: $progress%');
+            log.info('下载状态: $status');
           }
           if (status == DownloadTaskStatus.complete.index) {
             final coverUrl = song['img'];
             final coverDir = await getTemporaryDirectory();
             final coverPath = '${coverDir.path}/cover.jpg';
             await _dio.download(coverUrl, coverPath);
-            if (kDebugMode) {
-              print('下载完成');
-            }
+
+            log.info('下载完成');
           }
         });
 
@@ -63,7 +60,7 @@ class DownloadService {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('下载出错: $e');
+        log.severe('下载出错: $e');
       }
       return null;
     }

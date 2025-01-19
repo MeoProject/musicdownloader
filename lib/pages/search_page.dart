@@ -8,10 +8,10 @@ class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
 
   @override
-  _SearchPageState createState() => _SearchPageState();
+  SearchPageState createState() => SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class SearchPageState extends State<SearchPage> {
   final searchController = TextEditingController();
   final SearchService _searchService = SearchService();
   bool isLoading = false;
@@ -25,20 +25,25 @@ class _SearchPageState extends State<SearchPage> {
 
     try {
       final appState = AppStateProvider.of(context);
+      ScaffoldMessenger.of(context);
       final results = await _searchService.search(
         searchController.text,
         appState.currentEngine,
       );
 
+      if (!mounted) return;
       appState.setSearchResults(results);
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('搜索失败: ${e.toString()}')),
       );
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -122,10 +127,11 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void _showQualitySelector(Map<String, dynamic> song) {
-    final types = (song['types'] as List).map((t) => Map<String, dynamic>.from(t)).toList();
+    final types = (song['types'] as List)
+        .map((t) => Map<String, dynamic>.from(t))
+        .toList();
     final sortedTypes = QualityTranslations.sortQualities(
-      types.map((t) => t['type'] as String).toList()
-    );
+        types.map((t) => t['type'] as String).toList());
 
     showModalBottomSheet(
       context: context,
@@ -157,10 +163,12 @@ class _SearchPageState extends State<SearchPage> {
               ),
               Divider(),
               ...sortedTypes.map((type) {
-                final typesMap = Map<String, dynamic>.from(song['_types'] as Map);
-                final typeInfo = Map<String, dynamic>.from(typesMap[type] as Map);
+                final typesMap =
+                    Map<String, dynamic>.from(song['_types'] as Map);
+                final typeInfo =
+                    Map<String, dynamic>.from(typesMap[type] as Map);
                 return ListTile(
-                  title: Text(QualityTranslations.qualityNames_ZH[type] ?? ''),
+                  title: Text(QualityTranslations.qualityNamesZh[type] ?? ''),
                   trailing: Text(typeInfo['size']?.toString() ?? ''),
                   onTap: () async {
                     Navigator.pop(context);
@@ -193,30 +201,31 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _buildQualityTags(Map<String, dynamic> result) {
-    final types = (result['types'] as List).map((t) => t['type'] as String).toList();
+    final types =
+        (result['types'] as List).map((t) => t['type'] as String).toList();
     final sortedTypes = QualityTranslations.sortQualities(types);
-    
+
     // 只获取最高音质（排序后的最后一个）
     if (sortedTypes.isEmpty) return SizedBox.shrink();
-    
+
     final highestQuality = sortedTypes.last;
     final translation = QualityTranslations.qualityNames[highestQuality];
-    
+
     if (translation == null) {
       return SizedBox.shrink();
     }
-    
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       child: Text(
         translation,
         style: TextStyle(
           fontSize: 10,
-          color: highestQuality == '128k' 
-            ? Colors.black
-            : highestQuality == '320k'
-              ? Colors.brown 
-              : Colors.green,
+          color: highestQuality == '128k'
+              ? Colors.black
+              : highestQuality == '320k'
+                  ? Colors.brown
+                  : Colors.green,
         ),
       ),
     );

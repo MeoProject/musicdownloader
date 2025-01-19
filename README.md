@@ -1,2 +1,7 @@
-# musicdownloader
- A Flutter Musicdownloader.
+## 音乐下载器
+通过Flutter重写的新版本。
+
+## TODO
+[] 优化代码
+[] 写入元数据
+[] 保证软件稳定性

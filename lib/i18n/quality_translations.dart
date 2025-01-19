@@ -11,7 +11,7 @@ class QualityTranslations {
     'master': 'Master',
   };
 
-  static const Map<String, String> qualityNames_ZH = {
+  static const Map<String, String> qualityNamesZh = {
     '128k': '普通音质 128K',
     '320k': '高品音质 320K',
     'flac': '无损音质 FLAC',

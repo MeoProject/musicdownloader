@@ -2,6 +2,9 @@ import 'package:dio/dio.dart';
 import '../utils/format_utils.dart';
 import './custom_transformer.dart';
 import '../utils/md5_utils.dart';
+import 'package:logging/logging.dart';
+
+final log = Logger("Search");
 
 class SearchService {
   final Dio http = Dio(BaseOptions(
@@ -29,101 +32,23 @@ class SearchService {
   }
 
   Future<String?> getDownloadUrl(
-      String source, String songmid, String quality) async {
-    switch (source) {
-      case 'tx':
-        return _getTXDownloadUrl(songmid, quality);
-      case 'wy':
-        return _getWYDownloadUrl(songmid, quality);
-      case 'mg':
-        return _getMGDownloadUrl(songmid, quality);
-      case 'kg':
-        return _getKGDownloadUrl(songmid, quality);
-      case 'kw':
-        return _getKWDownloadUrl(songmid, quality);
-      default:
-        throw Exception('不支持的下载源');
+      String source, String songid, String quality) async {
+    try {
+      final response =
+          await http.get("https://lxmusic.ikunshare.com/url", queryParameters: {
+        "source": source,
+        "songId": songid,
+        "quality": quality,
+      });
+      if (response.statusCode != 200 || response.data['code'] != 0) {
+        final errormsg = response.data['msg'];
+        throw Exception('链接获取失败：$errormsg');
+      }
+      return response.data['data'].toString();
+    } catch (e) {
+      log.severe('链接获取失败, $source, $songid, $quality');
+      return null;
     }
-  }
-
-  Future<String?> _getTXDownloadUrl(String songmid, String quality) async {
-    final response = await http.get('https://lxmusic.ikunshare.com/url',
-        queryParameters: {
-          'source': 'tx',
-          'songId': songmid,
-          'quality': quality,
-        },
-        options: Options(headers: {
-          'X-Request-Key': 'IKUNSOURCE_PRIVATE',
-        }));
-    if (response.statusCode == 200 && response.data['code'] == 0) {
-      return response.data['data'];
-    }
-    return null;
-  }
-
-  Future<String?> _getWYDownloadUrl(String songmid, String quality) async {
-    final response = await http.get('https://lxmusic.ikunshare.com/url',
-        queryParameters: {
-          'source': 'wy',
-          'songId': songmid,
-          'quality': quality,
-        },
-        options: Options(headers: {
-          'X-Request-Key': 'IKUNSOURCE_PRIVATE',
-        }));
-    if (response.statusCode == 200 && response.data['code'] == 0) {
-      return response.data['data'];
-    }
-    return null;
-  }
-
-  Future<String?> _getMGDownloadUrl(String songmid, String quality) async {
-    final response = await http.get('https://lxmusic.ikunshare.com/url',
-        queryParameters: {
-          'source': 'mg',
-          'songId': songmid,
-          'quality': quality,
-        },
-        options: Options(headers: {
-          'X-Request-Key': 'IKUNSOURCE_PRIVATE',
-        }));
-    if (response.statusCode == 200 && response.data['code'] == 0) {
-      return response.data['data'];
-    }
-    return null;
-  }
-
-  Future<String?> _getKGDownloadUrl(String hash, String quality) async {
-    final response = await http.get('https://lxmusic.ikunshare.com/url',
-        queryParameters: {
-          'source': 'kg',
-          'songId': hash,
-          'quality': quality,
-        },
-        options: Options(headers: {
-          'X-Request-Key': 'IKUNSOURCE_PRIVATE',
-        }));
-    if (response.statusCode == 200 && response.data['code'] == 0) {
-      return response.data['data'];
-    }
-    return null;
-  }
-
-  Future<String?> _getKWDownloadUrl(String songmid, String quality) async {
-    final response = await http.get('https://lxmusic.ikunshare.com/url',
-        queryParameters: {
-          'source': 'kw',
-          'songId': songmid,
-          'quality': quality,
-        },
-        options: Options(headers: {
-          'X-Request-Key': 'IKUNSOURCE_PRIVATE',
-        }));
-    if (response.statusCode == 200 && response.data['code'] == 0) {
-      return response.data['data'];
-    }
-    return null;
   }
 
   Future<String?> getKGImage(Map<String, dynamic> songInfo) async {

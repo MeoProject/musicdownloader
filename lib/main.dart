@@ -10,11 +10,14 @@ import 'pages/settings_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await FlutterDownloader.initialize(debug: true);
+  await FlutterDownloader.initialize();
   await requestNotificationPermission();
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => Settings(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => Settings()),
+        ChangeNotifierProvider(create: (context) => AppState()),
+      ],
       child: MyApp(),
     ),
   );
@@ -30,10 +33,10 @@ class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
-  _MyAppState createState() => _MyAppState();
+  MyAppState createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
@@ -47,7 +50,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return AppStateProvider(
-      notifier: AppState(),
+      notifier: Provider.of<AppState>(context),
       child: MaterialApp(
         title: '音乐下载器',
         theme: ThemeData(
@@ -66,10 +69,10 @@ class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
   @override
-  _MainPageState createState() => _MainPageState();
+  MainPageState createState() => MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class MainPageState extends State<MainPage> {
   int _currentIndex = 0;
   final List<Widget> _pages = [
     HomePage(),
