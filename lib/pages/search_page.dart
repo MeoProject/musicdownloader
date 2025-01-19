@@ -136,29 +136,18 @@ class SearchPageState extends State<SearchPage> {
     showModalBottomSheet(
       context: context,
       builder: (context) {
-        return Container(
-          padding: EdgeInsets.symmetric(vertical: 16),
+        return SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '${song['title']} - ${song['artist']}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.close),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
+              ListTile(
+                title: Text(
+                  '${song['title']} - ${song['artist']}',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Divider(),
@@ -168,6 +157,7 @@ class SearchPageState extends State<SearchPage> {
                 final typeInfo =
                     Map<String, dynamic>.from(typesMap[type] as Map);
                 return ListTile(
+                  dense: true,
                   title: Text(QualityTranslations.qualityNamesZh[type] ?? ''),
                   trailing: Text(typeInfo['size']?.toString() ?? ''),
                   onTap: () async {
@@ -263,34 +253,36 @@ class SearchPageState extends State<SearchPage> {
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
-            SizedBox(height: 16),
             if (isLoading)
-              CircularProgressIndicator()
+              Center(child: CircularProgressIndicator())
             else
               Expanded(
                 child: ListView.builder(
+                  shrinkWrap: true,
                   itemCount: appState.searchResults.length,
                   itemBuilder: (context, index) {
                     final result = appState.searchResults[index];
-                    return ListTile(
-                      title: Row(
-                        children: [
-                          Expanded(
-                            child: Text(result['title'] ?? ''),
-                          ),
-                          _buildQualityTags(result),
-                        ],
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(result['artist'] ?? ''),
-                          Text(result['album'] ?? ''),
-                        ],
-                      ),
-                      trailing: IconButton(
-                        icon: Icon(Icons.download),
-                        onPressed: () => _showQualitySelector(result),
+                    return Card(
+                      child: ListTile(
+                        title: Row(
+                          children: [
+                            Expanded(
+                              child: Text(result['title'] ?? ''),
+                            ),
+                            _buildQualityTags(result),
+                          ],
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(result['artist'] ?? ''),
+                            Text(result['album'] ?? ''),
+                          ],
+                        ),
+                        trailing: IconButton(
+                          icon: Icon(Icons.download),
+                          onPressed: () => _showQualitySelector(result),
+                        ),
                       ),
                     );
                   },
