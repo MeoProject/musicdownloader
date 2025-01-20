@@ -34,13 +34,13 @@ class SearchService {
   Future<String?> getDownloadUrl(
       String source, String songid, String quality) async {
     try {
-      final response = await http.get(
-        "https://lxmusic.ikunshare.com/url", 
-        queryParameters: {
-          "source": source,
-          "songId": songid,
-          "quality": quality,
-        });
+      final response = await http.get("https://lxmusic.ikunshare.com/url",
+          queryParameters: {
+            "source": source,
+            "songId": songid,
+            "quality": quality,
+          },
+          options: Options(headers: {"X-Request-Key": "IKUNSOURCE_PRIVATE"}));
       if (response.statusCode != 200 || response.data['code'] != 0) {
         final errormsg = response.data['msg'];
         throw Exception('链接获取失败：$errormsg');
@@ -64,9 +64,7 @@ class SearchService {
         'relate': 1,
         'resource': [
           {
-            'album_audio_id': songInfo['songmid'].length == 32
-                ? songInfo['audioId'].split('_')[0]
-                : songInfo['songmid'],
+            'album_audio_id': songInfo['audioId'] ?? songInfo['songmid'],
             'album_id': songInfo['albumId'],
             'hash': songInfo['hash'],
             'id': 0,
@@ -87,7 +85,7 @@ class SearchService {
       ),
     );
 
-    if (response.statusCode == 200 && response.data['error_code'] == 0) {
+    if (response.data['error_code'] == 0) {
       final info = response.data['data'][0]['info'];
       final img = info['imgsize'] != null
           ? info['image'].replaceAll('{size}', info['imgsize'][0])
@@ -96,7 +94,7 @@ class SearchService {
         return img;
       }
     }
-    throw Exception('图片获取失败');
+    return null;
   }
 
   Future<List<Map<String, dynamic>>> _searchTX(String keyword,

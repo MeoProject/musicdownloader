@@ -13,7 +13,6 @@ dependencies:
   shared_preferences: ^2.2.2
   file_picker: ^5.3.1
   dio: ^5.7.0
-  flutter_downloader: ^1.7.4
   flutter_launcher_icons: ^0.14.3
   path_provider: ^2.1.5
   permission_handler: ^11.3.1
@@ -24,6 +23,8 @@ dependencies:
   flutter_markdown: ^0.7.5
   url_launcher: ^6.3.1
   fluttertoast: ^8.2.10
+  path: ^1.8.0
+  dynamic_color: ^1.7.0
 
 dev_dependencies:
   flutter_test:

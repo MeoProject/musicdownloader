@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:path_provider/path_provider.dart';
 
 class AppState extends ChangeNotifier {
+  static const int maxHistoryItems = 100;
+
   String _currentEngine = 'tx';
   List<Map<String, dynamic>> _searchResults = [];
   List<String> _searchHistory = [];
@@ -30,7 +32,12 @@ class AppState extends ChangeNotifier {
   }
 
   void addSearchHistory(String query) {
-    _searchHistory.add(query);
+    if (query.isEmpty || _searchHistory.contains(query)) return;
+
+    if (_searchHistory.length >= maxHistoryItems) {
+      _searchHistory.removeLast();
+    }
+    _searchHistory.insert(0, query);
     _saveConfig();
     notifyListeners();
   }

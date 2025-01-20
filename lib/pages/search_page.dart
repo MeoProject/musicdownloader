@@ -237,7 +237,12 @@ class SearchPageState extends State<SearchPage> {
                   border: InputBorder.none,
                   isDense: true,
                 ),
-                onSubmitted: (_) => performSearch(),
+                onSubmitted: (value) {
+                  if (value.isNotEmpty) {
+                    appState.addSearchHistory(value);
+                    performSearch();
+                  }
+                },
               ),
             ),
           ],
@@ -245,7 +250,12 @@ class SearchPageState extends State<SearchPage> {
         actions: [
           IconButton(
             icon: Icon(Icons.search),
-            onPressed: performSearch,
+            onPressed: () {
+              if (searchController.text.isNotEmpty) {
+                appState.addSearchHistory(searchController.text);
+                performSearch();
+              }
+            },
           ),
         ],
       ),
@@ -255,6 +265,24 @@ class SearchPageState extends State<SearchPage> {
           children: [
             if (isLoading)
               Center(child: CircularProgressIndicator())
+            else if (appState.searchResults.isEmpty &&
+                searchController.text.isEmpty)
+              Expanded(
+                child: ListView.builder(
+                  itemCount: appState.searchHistory.length,
+                  itemBuilder: (context, index) {
+                    final query = appState.searchHistory[index];
+                    return ListTile(
+                      leading: Icon(Icons.history),
+                      title: Text(query),
+                      onTap: () {
+                        searchController.text = query;
+                        performSearch();
+                      },
+                    );
+                  },
+                ),
+              )
             else
               Expanded(
                 child: ListView.builder(
