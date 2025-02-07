@@ -6,13 +6,13 @@ import 'package:path_provider/path_provider.dart';
 class AppState extends ChangeNotifier {
   static const int maxHistoryItems = 100;
 
-  String _currentEngine = 'tx';
+  String _currentSource = 'tx';
   List<Map<String, dynamic>> _searchResults = [];
   List<String> _searchHistory = [];
   String _currentSearchQuery = '';
   String _configFilePath = '';
 
-  String get currentEngine => _currentEngine;
+  String get currentSource => _currentSource;
   List<Map<String, dynamic>> get searchResults => _searchResults;
   List<String> get searchHistory => _searchHistory;
   String get currentSearchQuery => _currentSearchQuery;
@@ -21,8 +21,8 @@ class AppState extends ChangeNotifier {
     _loadConfig();
   }
 
-  void setCurrentEngine(String engine) {
-    _currentEngine = engine;
+  void setCurrentSource(String source) {
+    _currentSource = source;
     notifyListeners();
   }
 

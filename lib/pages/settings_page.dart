@@ -27,8 +27,8 @@ class _SettingsPageState extends State<SettingsPage> {
   Future<void> _selectDirectory() async {
     final settings = Provider.of<Settings>(context, listen: false);
     String? selectedPath = await FilePicker.platform.getDirectoryPath();
-    if (selectedPath != null && mounted) {
-      settings.downloadPath = selectedPath;
+    if (mounted) {
+      settings.downloadPath = selectedPath!;
     }
   }
 
@@ -85,12 +85,11 @@ class TipsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('温馨提示'),
+        title: Text('许可协议'),
       ),
       body: Markdown(
         data: '''
 By: MeoProject
-非原版歌词适配
 
 ## 协议
 ### 开头语
@@ -129,10 +128,10 @@ By: MeoProject
  7.1 本项目开发旨在对于技术可行性的探究，不接受任何商业性行为，使用者也不得使用本项目进行任何商业性行为。
 
 #### 八、协议生效
- 8.1 如您使用本项目，即代表您接受本协议。
- 8.2 因违反协议而造成的任何损失，本项目开发者不承担任何包括但不限于道德、法律责任。
- 8.3 本协议可能会发生变更，恕不另行通知，可自行前往查看。协议变更后，如您继续使用本项目，**即默认您接受变更后的新协议内容**如有疑问请联系: 
-  ikun@ikunshare.com
+ 8.1 如您使用本项目，即代表您接受本协议。  
+ 8.2 因违反协议而造成的任何损失，本项目开发者不承担任何包括但不限于道德、法律责任。  
+ 8.3 本协议可能会发生变更，恕不另行通知，可自行前往查看。协议变更后，如您继续使用本项目，**即默认您接受变更后的新协议内容**如有疑问请联系:  
+  ikun@ikunshare.com  
   naiy@zcmonety.xyz
         ''',
         selectable: true,

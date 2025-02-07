@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
+import 'package:logger/logger.dart';
 
-final log = Logger('Transformer');
+final log = Logger();
 
 class CustomTransformer extends BackgroundTransformer {
   @override
@@ -14,7 +14,6 @@ class CustomTransformer extends BackgroundTransformer {
 
   @override
   Future transformResponse(
-      // ignore: avoid_renaming_method_parameters
       RequestOptions options, ResponseBody response) async {
     final responseBody = await super.transformResponse(options, response);
     if (responseBody is String) {
@@ -26,7 +25,7 @@ class CustomTransformer extends BackgroundTransformer {
         return json.decode(responseBody);
       } catch (e) {
         if (kDebugMode) {
-          log.severe('JSON解析错误: $e');
+          log.e('JSON解析错误', error: e);
         }
         return responseBody;
       }

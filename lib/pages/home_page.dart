@@ -20,10 +20,12 @@ class HomePageState extends State<HomePage> {
 
   Future<void> fetchAnnouncement() async {
     try {
-      final response = await dio.get('YOUR_API_ENDPOINT');
-      if (response.statusCode == 200) {
+      final response = await dio
+          .get('https://api.v2.sukimon.me:19742/musicdownloader/getNotice');
+      if (response.statusCode == 200 && response.data['code'] == 0) {
         setState(() {
-          announcement = response.data['announcement'];
+          announcement = response.data['data']['raw'].toString() +
+              response.data['data']['ext'].toString();
         });
       }
     } catch (e) {
@@ -45,7 +47,9 @@ class HomePageState extends State<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('公告', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Text('公告',
+                    style:
+                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 SizedBox(height: 16),
                 Text(announcement),
               ],

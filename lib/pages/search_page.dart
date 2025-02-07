@@ -13,7 +13,6 @@ class SearchPage extends StatefulWidget {
 
 class SearchPageState extends State<SearchPage> {
   final searchController = TextEditingController();
-  final SearchService _searchService = SearchService();
   bool isLoading = false;
 
   Future<void> performSearch() async {
@@ -26,9 +25,9 @@ class SearchPageState extends State<SearchPage> {
     try {
       final appState = AppStateProvider.of(context);
       ScaffoldMessenger.of(context);
-      final results = await _searchService.search(
+      final results = await search(
         searchController.text,
-        appState.currentEngine,
+        appState.currentSource,
       );
 
       if (!mounted) return;
@@ -47,8 +46,8 @@ class SearchPageState extends State<SearchPage> {
     }
   }
 
-  Widget _getEngineIcon(String currentEngine) {
-    switch (currentEngine) {
+  Widget _getEngineIcon(String currentSource) {
+    switch (currentSource) {
       case 'tx':
         return Image.asset('assets/images/tx_icon.png', width: 24, height: 24);
       case 'wy':
@@ -79,7 +78,7 @@ class SearchPageState extends State<SearchPage> {
                 leading: Image.asset('assets/images/tx_icon.png',
                     width: 24, height: 24),
                 onTap: () {
-                  appState.setCurrentEngine('tx');
+                  appState.setCurrentSource('tx');
                   Navigator.pop(context);
                 },
               ),
@@ -88,7 +87,7 @@ class SearchPageState extends State<SearchPage> {
                 leading: Image.asset('assets/images/wy_icon.png',
                     width: 24, height: 24),
                 onTap: () {
-                  appState.setCurrentEngine('wy');
+                  appState.setCurrentSource('wy');
                   Navigator.pop(context);
                 },
               ),
@@ -97,7 +96,7 @@ class SearchPageState extends State<SearchPage> {
                 leading: Image.asset('assets/images/mg_icon.png',
                     width: 24, height: 24),
                 onTap: () {
-                  appState.setCurrentEngine('mg');
+                  appState.setCurrentSource('mg');
                   Navigator.pop(context);
                 },
               ),
@@ -106,7 +105,7 @@ class SearchPageState extends State<SearchPage> {
                 leading: Image.asset('assets/images/kg_icon.png',
                     width: 24, height: 24),
                 onTap: () {
-                  appState.setCurrentEngine('kg');
+                  appState.setCurrentSource('kg');
                   Navigator.pop(context);
                 },
               ),
@@ -115,7 +114,7 @@ class SearchPageState extends State<SearchPage> {
                 leading: Image.asset('assets/images/kw_icon.png',
                     width: 24, height: 24),
                 onTap: () {
-                  appState.setCurrentEngine('kw');
+                  appState.setCurrentSource('kw');
                   Navigator.pop(context);
                 },
               ),
@@ -167,6 +166,14 @@ class SearchPageState extends State<SearchPage> {
                       await downloadService.downloadMusic(
                         song['source'],
                         song['hash'],
+                        type,
+                        song,
+                        context,
+                      );
+                    } else if (song['source'] == 'mg') {
+                      await downloadService.downloadMusic(
+                        song['source'],
+                        song['copyrightId'],
                         type,
                         song,
                         context,
@@ -227,7 +234,7 @@ class SearchPageState extends State<SearchPage> {
       appBar: AppBar(
         title: Row(
           children: [
-            _getEngineIcon(appState.currentEngine),
+            _getEngineIcon(appState.currentSource),
             SizedBox(width: 8),
             Expanded(
               child: TextField(
