@@ -1,9 +1,11 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:dio/dio.dart';
+import 'package:audiotags/audiotags.dart';
 import 'package:musicdownloader/state/settings.dart';
 import 'package:provider/provider.dart';
 import '../i18n/quality_translations.dart';
@@ -14,34 +16,16 @@ final log = Logger();
 class DownloadService {
   final Dio _dio = Dio();
 
-  // 应用测试，暂时不使用正式后端
-  // Future<String?> getDownloadUrl(
-  //     String source, String songid, String quality) async {
-  //   try {
-  //     final response = await _dio.get(
-  //         "https://ikun.laoguantx.top:19742/url/$source/$songid/$quality",
-  //         options: Options(headers: {"X-Request-Key": "LXMusic_dmsowplaeq"}));
-  //     if (response.statusCode != 200 || response.data['code'] != 0) {
-  //       final errormsg = response.data['msg'];
-  //       throw Exception('链接获取失败：$errormsg');
-  //     }
-  //     return response.data['data'].toString();
-  //   } catch (e) {
-  //     log.severe('链接获取失败, $source, $songid, $quality');
-  //     return null;
-  //   }
-  // }
-
   Future<String?> getDownloadUrl(
       String source, String songid, String quality) async {
     try {
-      final response = await _dio.get("https://lxmusic.ikunshare.com/url",
+      final response = await _dio.get("",
           queryParameters: {
             "source": source,
             "songId": songid,
             "quality": quality,
           },
-          options: Options(headers: {"X-Request-Key": "110.42.57.14"}));
+          options: Options(headers: {"X-Request-Key": ""}));
       if (response.statusCode != 200 || response.data['code'] != 0) {
         final errormsg = response.data['msg'];
         throw Exception('链接获取失败：$errormsg');
@@ -74,6 +58,7 @@ class DownloadService {
       final fileName =
           '${song['artist']} - ${song['title']} - ${QualityTranslations.qualityNamesZh[quality]}.${_getFileExtension(quality)}'
               .replaceAll(RegExp(r'[<>:"/\\|?*]'), '_');
+
       final savePath = path.join(downloadPath, fileName);
 
       if (!context.mounted) return null;
@@ -93,7 +78,7 @@ class DownloadService {
                     children: [
                       Expanded(
                         child: Text(
-                          "${song['artist']} - ${song['title']} - $quality",
+                          "${song['artist']} - ${song['title']} - ${QualityTranslations.qualityNamesZh[quality]}",
                           style: Theme.of(context).textTheme.titleMedium,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -135,7 +120,8 @@ class DownloadService {
         return null;
       }
 
-      if (await Permission.storage.request().isGranted) {
+      if (await Permission.storage.request().isGranted &&
+          !await File(savePath).exists()) {
         try {
           await _dio.download(
             url,
@@ -152,24 +138,22 @@ class DownloadService {
                 progressNotifier.value = received / total;
                 if (received == total) {
                   try {
-                    // final coverResponse = await Dio().get<Uint8List>(
-                    //   song['img'],
-                    //   options: Options(responseType: ResponseType.bytes),
-                    // );
-                    // final success = await _writeAudioTags(
-                    //   path: savePath,
-                    //   title: song['title'] ?? '未知标题',
-                    //   artist: song['artist'] ?? '未知艺术家',
-                    //   album: song['album'] ?? '未知专辑',
-                    //   lyrics: song['lrc'] ?? '纯音乐或歌词获取失败',
-                    //   artworkBytes: coverResponse.data,
-                    //   artworkMime: 'image/jpeg',
-                    // );
-                    // if (success) {
-                    //   log.i("标签写入成功");
-                    // } else {
-                    //   log.w("标签写入失败");
-                    // }
+                    final coverResponse = await Dio().get<Uint8List>(
+                      song['img'],
+                      options: Options(responseType: ResponseType.bytes),
+                    );
+                    Tag tag = Tag(
+                        title: song["title"],
+                        trackArtist: song["artist"],
+                        album: song["album"],
+                        albumArtist: song["artist"],
+                        pictures: [
+                          Picture(
+                              bytes: Uint8List.fromList(coverResponse.data as List<int>),
+                              mimeType: null,
+                              pictureType: PictureType.other)
+                        ]);
+                    await AudioTags.write(savePath, tag);
                   } catch (e) {
                     log.e("标签写入异常", error: e);
                   }

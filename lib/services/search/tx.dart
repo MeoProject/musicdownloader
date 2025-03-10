@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import '../custom_transformer.dart';
+
 import '../../utils/format_utils.dart';
+import '../custom_transformer.dart';
 
 final Dio http = Dio(BaseOptions(
   validateStatus: (status) => true,

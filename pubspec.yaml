@@ -20,6 +20,7 @@ dependencies:
   mime: ^2.0.0
   provider: ^6.1.2
   logger: ^2.5.0
+  audiotags: ^1.4.3
   flutter_markdown: ^0.7.5
   url_launcher: ^6.3.1
   fluttertoast: ^8.2.10

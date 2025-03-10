@@ -4,7 +4,7 @@ import './search/tx.dart';
 import './search/mg.dart';
 import './search/wy.dart';
 
-const int limit = 50;
+const int limit = 20;
 
 Future<List<Map<String, dynamic>>> search(String keyword, String source) async {
   switch (source) {

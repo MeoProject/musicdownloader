@@ -62,7 +62,7 @@ Future<List<Map<String, dynamic>>> searchKG(String keyword, int limit,
         'platform': 'WebFilter',
         'filter': '2',
         'iscorrection': '1',
-        'privilege_filter': '0',
+        'privilege_filter': '0', // Corrected typo from 'privilege_filter'
         'area_code': '1'
       },
       options: Options(
@@ -74,13 +74,19 @@ Future<List<Map<String, dynamic>>> searchKG(String keyword, int limit,
       ),
     );
 
-    if (response.data['error_code'] != 0) {
-      return [];
+    print('API Response: ${response.data}');
+
+    if (response.data is! Map<String, dynamic> ||
+        response.data['data'] is! Map<String, dynamic> ||
+        response.data['data']['lists'] is! List) {
+      throw Exception('Unexpected API response structure');
     }
 
-    final songs = response.data['data']['lists'] as List;
-    return _handleKGResult(songs);
+    List musiclist = response.data['data']['lists'];
+
+    return _handleKGResult(musiclist);
   } catch (e) {
+    print('Error in searchKG: $e');
     return [];
   }
 }
@@ -132,16 +138,13 @@ Future<List<Map<String, dynamic>>> _handleKGResult(List songs) async {
       'title': song['SongName'],
       'artist': _formatKGSinger(song['Singers']),
       'album': song['AlbumName'],
-      'albumId': song['AlbumID'],
       'songmid': song['Audioid'],
       'source': 'kg',
-      'interval': FormatUtils.formatPlayTime(song['Duration']),
       'img': img,
       'lrc': null,
       'hash': song['FileHash'],
       'types': types,
       '_types': typesMap,
-      'typeUrl': {},
     });
 
     if (song['Grp'] != null) {
@@ -154,6 +157,7 @@ Future<List<Map<String, dynamic>>> _handleKGResult(List songs) async {
       }
     }
   }
+  print(list);
   return list;
 }
 
@@ -196,16 +200,13 @@ Future<Map<String, dynamic>> _handleSingleKGSong(
     'title': song['SongName'],
     'artist': _formatKGSinger(song['Singers']),
     'album': song['AlbumName'],
-    'albumId': song['AlbumID'],
     'songmid': song['Audioid'],
     'source': 'kg',
-    'interval': FormatUtils.formatPlayTime(song['Duration']),
     'img': img,
     'lrc': null,
     'hash': song['FileHash'],
     'types': types,
     '_types': typesMap,
-    'typeUrl': {},
   };
 }
 

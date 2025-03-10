@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import '../../utils/format_utils.dart';
 
 final Dio dio = Dio();
 
@@ -105,15 +104,12 @@ Future<List<Map<String, dynamic>>> _handleKWResult(List songs) {
       'title': song['SONGNAME'],
       'artist': song['ARTIST'],
       'album': song['ALBUM'],
-      'albumId': song['ALBUMID'],
       'songmid': songmid,
       'source': 'kw',
-      'interval': FormatUtils.formatPlayTime(int.parse(song['DURATION'])),
       'img': await _getKWPic(songmid),
       'lrc': null,
       'types': types,
       '_types': typesMap,
-      'typeUrl': {},
     };
   })).then((list) => list);
 }

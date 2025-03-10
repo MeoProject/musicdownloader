@@ -104,18 +104,12 @@ Future<List<Map<String, dynamic>>> _handleMGResult(List resultList) async {
         'artist': _formatMGSinger(song['singerList']),
         'album': song['album'],
         'albumId': song['albumId'],
-        'songmid': song['songId'],
         'copyrightId': song['copyrightId'],
         'source': 'mg',
-        'interval': FormatUtils.formatPlayTime(song['duration']),
         'img': img,
         'lrc': lyricResponse.data,
-        'lrcUrl': song['lrcUrl'],
-        'mrcUrl': song['mrcurl'],
-        'trcUrl': song['trcUrl'],
         'types': types,
         '_types': typesMap,
-        'typeUrl': {},
       });
     }
   }

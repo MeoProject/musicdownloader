@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/musicdownloader.iml" filepath="$PROJECT_DIR$/.idea/musicdownloader.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/musicdownloader_android.iml" filepath="$PROJECT_DIR$/android/musicdownloader_android.iml" />
     </modules>
   </component>
 </project>
